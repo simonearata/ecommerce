@@ -14,7 +14,9 @@ export interface IEcomContext {
   deleteProduct: (id: number) => void;
   productDetails: IProductDetails[];
   totalprice: number;
-  getProductById: (id: number) => IProductDetails;
+  getProductById: (id: number) => IProductDetails | undefined;
+  setCounterId: (id: number) => void;
+  counterId: number;
 }
 
 const initialContext: IEcomContext = {
@@ -25,54 +27,35 @@ const initialContext: IEcomContext = {
   onClickBag: () => {},
   deleteProduct: () => {},
   productDetails: [],
-  getProductById: (id: number) => ({
+  getProductById: (id: number) =>
+    /* ({
     id: -1,
     name: "",
     details: "",
-    price: 50,
-  }),
+    price: 0,
+  }), <--- è possibile inserire entrambi ----> */ undefined,
   totalprice: 0,
+  counterId: 0,
+  setCounterId: () => {},
 };
 const EcomContext = createContext<IEcomContext>(initialContext);
 
 const EcomProvider: FC<IEcomProvider> = (props) => {
+  const initialCounter = localStorage?.getItem("counterId");
+  const parsedCounter: number = initialCounter
+    ? JSON.parse(initialCounter)
+    : [];
+  const [counterId, setCounterId] = useState<number>(parsedCounter);
+
   const [visibleBag, setVisibleBag] = useState<boolean>(false);
 
   const initialCart = localStorage?.getItem("cart");
   const parsedCart: IProductCart[] = initialCart ? JSON.parse(initialCart) : [];
-
   const [cart, setCart] = useState<IProductCart[]>(parsedCart);
 
   const onClickBag = () => {
     setVisibleBag(!visibleBag);
   };
-
-  const deleteProduct = (id: number) => {
-    let cleanTrash = [...cart].filter((item) => {
-      if (id === item.productId) {
-        return false;
-      }
-      return true;
-    });
-    setCart(cleanTrash);
-  };
-
-  const getProductById = (id: number) => {
-    return productDetails.find((product) => {
-      if (product.id === id) {
-        return true;
-      }
-    });
-  };
-
-  let totalprice = 0;
-  cart.map((e, index) => {
-    const product = getProductById(e?.productId);
-    if (product) {
-      totalprice += product?.price;
-    }
-    return totalprice;
-  });
 
   const productDetails = [
     {
@@ -101,6 +84,33 @@ const EcomProvider: FC<IEcomProvider> = (props) => {
     },
   ];
 
+  const deleteProduct = (id: number) => {
+    let cleanTrash = [...cart].filter((item) => {
+      if (id === item.productId) {
+        return false;
+      }
+      return true;
+    });
+    setCart(cleanTrash);
+  };
+
+  const getProductById = (id: number) => {
+    return productDetails.find((product) => {
+      if (product.id === id) {
+        return true;
+      }
+    });
+  };
+
+  let totalprice = 0;
+  cart.map((e) => {
+    const product = getProductById(e?.productId);
+    if (product) {
+      totalprice += product?.price * e?.quantity;
+    }
+    return totalprice;
+  });
+
   const EcomData: IEcomContext = {
     setVisibleBag,
     setCart,
@@ -111,6 +121,8 @@ const EcomProvider: FC<IEcomProvider> = (props) => {
     productDetails,
     getProductById,
     totalprice,
+    counterId,
+    setCounterId,
   };
 
   return (

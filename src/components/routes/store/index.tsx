@@ -50,34 +50,34 @@ function Store() {
     },
     mobile: {
       breakpoint: { max: 464, min: 0 },
-      items: 5,
+      items: 2,
     },
   };
 
   const responsiveProduct = {
     superLargeDesktop: {
-      breakpoint: { max: 4000, min: 3000 },
+      breakpoint: { max: 1200, min: 960 },
       items: 3,
     },
     desktop: {
-      breakpoint: { max: 3000, min: 1024 },
+      breakpoint: { max: 960, min: 800 },
       items: 3,
     },
     tablet: {
-      breakpoint: { max: 1024, min: 464 },
-      items: 3,
+      breakpoint: { max: 800, min: 580 },
+      items: 2,
     },
     mobile: {
-      breakpoint: { max: 464, min: 0 },
-      items: 3,
+      breakpoint: { max: 580, min: 0 },
+      items: 1,
     },
   };
 
   return (
-    <Box pt="44px" maxWidth={"980px"} m={"auto"}>
+    <Box px={{ base: "20px" }} pt={[70, 10, 20]} maxWidth={"980px"} m={"auto"}>
       <HStack
-        justifyContent={"space-between"}
-        p={"80px 0 64px"}
+        justifyContent={{ base: "center", lg: "space-between" }}
+        py={[0, 10, 20]}
         flexWrap={"wrap"}
       >
         <Text fontSize="5xl" maxW={"640px"}>
@@ -108,7 +108,11 @@ function Store() {
         </Carousel>
       </Box>
 
-      <Text textAlign={"left"} fontSize={"2xl"} pb={"14px"}>
+      <Text
+        textAlign={{ base: "center", md: "left" }}
+        fontSize={"2xl"}
+        pb={"14px"}
+      >
         Da non perdere. Dai un'occhiata alle ultime novità
       </Text>
       <Carousel responsive={responsiveProduct}>
@@ -133,10 +137,14 @@ function Store() {
         })}
       </Carousel>
 
-      <Text textAlign={"left"} fontSize={"2xl"} pb={"14px"}>
+      <Text
+        textAlign={{ base: "center", md: "left" }}
+        fontSize={"2xl"}
+        pb={"14px"}
+      >
         Serve aiuto? Lo trovi qui, come e quando vuoi.
       </Text>
-      <HStack>
+      <HStack justifyContent={"center"}>
         <Box w={"360px"} h={"380px"} borderRadius={"10px"} bgColor={"gray"}>
           <Box textAlign={"left"} p={"30px"}>
             <Text fontSize={"2xl"} fontWeight={"bold"} color={"white"}>

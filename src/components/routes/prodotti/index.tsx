@@ -15,33 +15,20 @@ export interface IProductCart {
   productId: number;
 }
 
+let n = 0;
+
 function Prodotti() {
-  const { cart, setCart, productDetails } = useEcom();
+  const { cart, setCart, productDetails, counterId, setCounterId } = useEcom();
 
   useEffect(() => {
     localStorage.setItem("cart", JSON.stringify(cart));
-  });
-
-  let productId: number[] = cart.map((e) => {
-    return e.id;
+    localStorage.setItem("counterId", JSON.stringify(counterId));
+    if (cart.length === 0) {
+      setCounterId(0);
+    }
   });
 
   const addCart = (id: number) => {
-    /* let purchase = productDetails?.filter((item) => {
-      if (id !== item.id) {
-        return false;
-      }
-      return true;
-    });
-    if (productId.includes(id)){
-      cart.map((items) => {
-        setCart([...cart, quantity: items.quantity + 1 ])
-      })
-    }
-
-    if (purchase && cart) {
-      setCart([...cart, ...purchase]);
-    } */
     let foundInCart = false;
     let newProduct = cart.map((item) => {
       if (item?.productId === id) {
@@ -52,7 +39,8 @@ function Prodotti() {
     });
 
     if (!foundInCart) {
-      newProduct.push({ id: 0, quantity: 1, productId: id });
+      newProduct.push({ id: counterId, quantity: 1, productId: id });
+      setCounterId(counterId + 1);
     }
     setCart(newProduct);
   };

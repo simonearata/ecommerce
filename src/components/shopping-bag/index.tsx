@@ -13,7 +13,6 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React from "react";
 import { useEcom } from "../../providers/ecom-provider";
 import { IButtonMenu } from "../header";
-import { IProductCart } from "../routes/prodotti";
 
 function ShoppingBag() {
   const { cart, setCart, deleteProduct, getProductById, totalprice } =
@@ -25,17 +24,35 @@ function ShoppingBag() {
     { link: "/accedi", name: "accedi" },
   ];
 
-  const changeQuantity = (id: number, PM: string) => {
-    cart.map((item) => {
-      if (PM === "add") {
-        return { ...cart, quantity: item?.quantity + 1 };
-      }
-      if (PM === "minus") {
-        return { ...cart, quantity: item?.quantity + 1 };
-      }
-    });
-    setCart(cart);
+  const changeQuantity = (id: number, minPlus: string) => {
+    if (minPlus === "add") {
+      let changQ = cart.map((item) => {
+        if (item?.id === id) {
+          item.quantity++;
+        }
+        return item;
+      });
+      setCart(changQ);
+    }
+
+    if (minPlus === "minus") {
+      let changQ = cart.map((item) => {
+        if (item?.id === id && item?.quantity !== 1) {
+          item.quantity--;
+        }
+        return item;
+      });
+      setCart(changQ);
+    }
   };
+
+  console.log(cart);
+
+  let shopBag = 0;
+  cart.map((e) => {
+    shopBag += e?.quantity;
+    return shopBag;
+  });
 
   return (
     <Box
@@ -45,7 +62,7 @@ function ShoppingBag() {
       position={"absolute"}
       bgColor={"white"}
       top={"41px"}
-      right={"0"}
+      right={{ base: "119px", md: "0px" }}
       zIndex={"1"}
       mr={"-136px"}
       borderRadius={"10px"}
@@ -70,7 +87,13 @@ function ShoppingBag() {
               <HStack key={e?.id + index}>
                 <Text>{product?.name}</Text>
                 <Text>{product?.price}$</Text>
-                <Button>-</Button>
+                <Button
+                  onClick={() => {
+                    changeQuantity(e?.id, "minus");
+                  }}
+                >
+                  -
+                </Button>
                 <Text>{e.quantity}</Text>
                 <Button
                   onClick={() => {
@@ -117,7 +140,7 @@ function ShoppingBag() {
             borderTop={"1px"}
             borderColor={"#d2d2d7"}
           >
-            <Link to={"shop-bag"}>Shopping bag - {cart.length}</Link>
+            <a href="/shop-bag">Shopping bag - {shopBag}</a>
           </ListItem>
         )}
         {linkShoppingBag.map((item, index) => {
